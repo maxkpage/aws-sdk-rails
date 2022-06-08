@@ -41,12 +41,15 @@ module Aws
         send_opts[:content] = {}
         send_opts[:content][:raw] = { data: message.to_s }
 
-        send_opts[:from_email_address] = message.from_address&.to_s
+        #send_opts[:from_email_address] = message.from_address&.to_s
 
-        send_opts[:destination] = {}
-        send_opts[:destination][:to_addresses] = [*message.to]
-        send_opts[:destination][:cc_addresses] = [*message.cc]
-        send_opts[:destination][:bcc_addresses] = [*message.bcc]
+        if message.respond_to?(:destinations)
+          # send_opts[:destination] = {}
+          # send_opts[:destination][:to_addresses] = [*message.to]
+          # send_opts[:destination][:cc_addresses] = [*message.cc]
+          # send_opts[:destination][:bcc_addresses] = [*message.bcc]
+          send_opts[:destinations] = message.destinations
+        end
 
         # send_opts[:configuration_set_name] = message.header['X-SES-CONFIGURATION-SET']&.yield_self do |field|
         #   message.header.fields.delete(field).value
