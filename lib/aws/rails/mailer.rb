@@ -75,6 +75,13 @@ module Aws
         #   {contact_list_name: contact_list_name, topic_name: topic_name}.compact
         # end
 
+        puts "Send opts:"
+        puts send_opts.inspect.to_s
+        puts "*********"
+        puts "*********"
+        puts "*********"
+        puts "*********"
+
         @client.send_email(send_opts).tap do |response|
           message.header[:ses_message_id] = response.message_id
         end
