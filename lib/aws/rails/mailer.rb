@@ -37,19 +37,34 @@ module Aws
         #   message.header[:ses_message_id] = response.message_id
         # end
 
+        puts "*********"
+        puts "*********"
+        puts "*********"
+        puts "*********"
+        puts "Message:"
+        puts message.inspect.to_s
+        puts "*********"
+        puts "*********"
+        puts "*********"
+        puts "*********"
+
+        # Docs for what to set
+        # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SESV2/Client.html#send_email-instance_method
+
         send_opts = {}
         send_opts[:content] = {}
         send_opts[:content][:raw] = { data: message.to_s }
 
-        #send_opts[:from_email_address] = message.from_address&.to_s
+        send_opts[:from_email_address] = message.from&.to_s
 
-        if message.respond_to?(:destinations)
-          # send_opts[:destination] = {}
-          # send_opts[:destination][:to_addresses] = [*message.to]
-          # send_opts[:destination][:cc_addresses] = [*message.cc]
-          # send_opts[:destination][:bcc_addresses] = [*message.bcc]
-          send_opts[:destinations] = message.destinations
-        end
+        puts "  checking destinations"
+        send_opts[:destination] = {}
+        send_opts[:destination][:to_addresses] = [*message.to]
+        send_opts[:destination][:cc_addresses] = [*message.cc]
+        send_opts[:destination][:bcc_addresses] = [*message.bcc]
+        #send_opts[:destinations] = message.destinations
+
+        send_opts[:reply_to_addresses] = message.reply_to unless message.reply_to.blank?
 
         # send_opts[:configuration_set_name] = message.header['X-SES-CONFIGURATION-SET']&.yield_self do |field|
         #   message.header.fields.delete(field).value
