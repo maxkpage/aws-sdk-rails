@@ -60,8 +60,8 @@ module Aws
         puts "  checking destinations"
         send_opts[:destination] = {}
         send_opts[:destination][:to_addresses] = [message.to].flatten
-        send_opts[:destination][:cc_addresses] = [message.cc].flatten
-        send_opts[:destination][:bcc_addresses] = [message.bcc].flatten
+        send_opts[:destination][:cc_addresses] = [message.cc].flatten unless message.cc.blank?
+        send_opts[:destination][:bcc_addresses] = [message.bcc].flatten unless message.bcc.blank?
         #send_opts[:destinations] = message.destinations
 
         send_opts[:reply_to_addresses] = message.reply_to unless message.reply_to.blank?
