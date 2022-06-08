@@ -56,7 +56,9 @@ module Aws
         send_opts[:content][:raw] = { data: message.to_s }
 
         puts "From address: #{message.from}"
-        send_opts[:from_email_address] = message.from
+
+        send_opts[:from_email_address] = message.from.first if message.from.kind_of?(Array)
+        send_opts[:from_email_address] ||= message.from.to_s
 
         puts "  checking destinations"
         send_opts[:destination] = {}
