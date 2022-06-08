@@ -48,14 +48,14 @@ module Aws
         send_opts[:destination][:cc_addresses] = [*message.cc]
         send_opts[:destination][:bcc_addresses] = [*message.bcc]
 
-        send_opts[:configuration_set_name] = message.header['X-SES-CONFIGURATION-SET']&.yield_self do |field|
-          message.header.fields.delete(field).value
-        end
+        # send_opts[:configuration_set_name] = message.header['X-SES-CONFIGURATION-SET']&.yield_self do |field|
+        #   message.header.fields.delete(field).value
+        # end
 
-        send_opts[:list_management_options] = message.header['X-SES-LIST-MANAGEMENT-OPTIONS']&.yield_self do |field|
-          contact_list_name, topic_name = message.header.fields.delete(field).value.sub("topic=", "").split(";").map(&:strip)
-          {contact_list_name: contact_list_name, topic_name: topic_name}.compact
-        end
+        # send_opts[:list_management_options] = message.header['X-SES-LIST-MANAGEMENT-OPTIONS']&.yield_self do |field|
+        #   contact_list_name, topic_name = message.header.fields.delete(field).value.sub("topic=", "").split(";").map(&:strip)
+        #   {contact_list_name: contact_list_name, topic_name: topic_name}.compact
+        # end
 
         @client.send_email(send_opts).tap do |response|
           message.header[:ses_message_id] = response.message_id
