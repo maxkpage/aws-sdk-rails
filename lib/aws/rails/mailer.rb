@@ -25,29 +25,6 @@ module Aws
       # Rails expects this method to exist, and to handle a Mail::Message object
       # correctly. Called during mail delivery.
       def deliver!(message)
-        # send_opts = {}
-        # send_opts[:raw_message] = {}
-        # send_opts[:raw_message][:data] = message.to_s
-
-        # if message.respond_to?(:destinations)
-        #   send_opts[:destinations] = message.destinations
-        # end
-
-        # @client.send_raw_email(send_opts).tap do |response|
-        #   message.header[:ses_message_id] = response.message_id
-        # end
-
-        puts "*********"
-        puts "*********"
-        puts "*********"
-        puts "*********"
-        puts "Message:"
-        puts message.inspect.to_s
-        puts "*********"
-        puts "*********"
-        puts "*********"
-        puts "*********"
-
         # Docs for what to set
         # https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SESV2/Client.html#send_email-instance_method
 
@@ -55,35 +32,15 @@ module Aws
         send_opts[:content] = {}
         send_opts[:content][:raw] = { data: message.to_s }
 
-        puts "From address: #{message.from}"
-
         send_opts[:from_email_address] = message.from.first if message.from.kind_of?(Array)
         send_opts[:from_email_address] ||= message.from.to_s
 
-        puts "  checking destinations"
         send_opts[:destination] = {}
         send_opts[:destination][:to_addresses] = [message.to].flatten
         send_opts[:destination][:cc_addresses] = [message.cc].flatten unless message.cc.blank?
         send_opts[:destination][:bcc_addresses] = [message.bcc].flatten unless message.bcc.blank?
-        #send_opts[:destinations] = message.destinations
 
         send_opts[:reply_to_addresses] = message.reply_to unless message.reply_to.blank?
-
-        # send_opts[:configuration_set_name] = message.header['X-SES-CONFIGURATION-SET']&.yield_self do |field|
-        #   message.header.fields.delete(field).value
-        # end
-
-        # send_opts[:list_management_options] = message.header['X-SES-LIST-MANAGEMENT-OPTIONS']&.yield_self do |field|
-        #   contact_list_name, topic_name = message.header.fields.delete(field).value.sub("topic=", "").split(";").map(&:strip)
-        #   {contact_list_name: contact_list_name, topic_name: topic_name}.compact
-        # end
-
-        puts "Send opts:"
-        puts send_opts.inspect.to_s
-        puts "*********"
-        puts "*********"
-        puts "*********"
-        puts "*********"
 
         @client.send_email(send_opts).tap do |response|
           message.header[:ses_message_id] = response.message_id
